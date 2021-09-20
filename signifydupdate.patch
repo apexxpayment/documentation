@@ -1,0 +1,375 @@
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/AvsEmsCodeMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/AvsEmsCodeMapper.php
+new file mode 100644
+index 0000000..2d8228b
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/AvsEmsCodeMapper.php
+@@ -0,0 +1,41 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\AvsEmsCodeMapper as Base_AvsEmsCodeMapper;
++
++class AvsEmsCodeMapper extends Base_AvsEmsCodeMapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $avsResponse = $order->getPayment()->getAvsResponse();
++        $avsStatus = null;
++
++        if ($this->isAvsStatus($avsResponse)) {
++            $avsStatus = $avsResponse;
++        }
++
++        if (empty($avsStatus)) {
++            $avsStatus = parent::getPaymentData($order);
++        }
++
++        return $avsStatus;
++    }
++
++     /**
++     * @param array $additionalInfo
++     * @return bool
++     */
++    protected function isAvsStatus($avsResponse)
++    {
++        if (empty($avsResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/BinMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/BinMapper.php
+new file mode 100644
+index 0000000..9ffd339
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/BinMapper.php
+@@ -0,0 +1,45 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\BinMapper as BaseBinMapper;
++
++/**
++ * Class BinMapper
++ * @package Mido\Apexx\Model\Payment\HostedPayment
++ */
++class BinMapper extends BaseBinMapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $binResponse = $order->getPayment()->getBin();
++        $bin = null;
++
++        if ($this->isBin($binResponse)) {
++            $bin = substr($binResponse, 0, 6);
++        }
++
++        if (empty($bin)) {
++            $bin = parent::getPaymentData($order);
++        }
++
++        return $bin;
++    }
++
++     /**
++     * @param array $additionalInfo
++     * @return bool
++     */
++    protected function isBin($binResponse)
++    {
++        if (empty($binResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+\ No newline at end of file
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/CvvEmsCodeMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/CvvEmsCodeMapper.php
+new file mode 100644
+index 0000000..82aeaad
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/CvvEmsCodeMapper.php
+@@ -0,0 +1,41 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\CvvEmsCodeMapper as Base_CvvEmsCodeMapper;
++
++class CvvEmsCodeMapper extends Base_CvvEmsCodeMapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $cvvResponse = $order->getPayment()->getCvvResponse();
++        $cvvStatus = null;
++
++        if ($this->isCvvStatus($cvvResponse)) {
++            $cvvStatus = $cvvResponse;
++        }
++
++        if (empty($cvvStatus)) {
++            $cvvStatus = parent::getPaymentData($order);
++        }
++
++        return $cvvStatus;
++    }
++
++     /**
++     * @param array $additionalInfo
++     * @return bool
++     */
++    protected function isCvvStatus($cvvResponse)
++    {
++        if (empty($cvvResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpMonthMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpMonthMapper.php
+new file mode 100644
+index 0000000..048cd67
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpMonthMapper.php
+@@ -0,0 +1,41 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\ExpMonthMapper as Base_ExpMonthMapper;
++
++class ExpMonthMapper extends Base_ExpMonthMapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $monthResponse = $order->getPayment()->getCcExpMonth();
++        $expMonth = null;
++
++        if ($this->isExpMonth($monthResponse)) {
++            $expMonth = $monthResponse;
++        }
++
++        if (empty($expMonth)) {
++            $expMonth = parent::getPaymentData($order);
++        }
++
++        return $expMonth;
++    }
++
++    /**
++     * @param array $monthResponse
++     * @return bool
++     */
++    protected function isExpMonth($monthResponse)
++    {
++        if (empty($monthResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+\ No newline at end of file
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpYearMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpYearMapper.php
+new file mode 100644
+index 0000000..57ce6de
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/ExpYearMapper.php
+@@ -0,0 +1,40 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\ExpYearMapper as Base_ExpYearMapper;
++
++class ExpYearMapper extends Base_ExpYearMapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $yearResponse = $order->getPayment()->getCcExpYear();
++        $expYear = null;
++
++        if ($this->isExpYear($yearResponse)) {
++            $expYear = $yearResponse;
++        }
++
++        if (empty($expYear)) {
++            $expYear = parent::getPaymentData($order);
++        }
++
++        return $expYear;
++    }
++
++    /**
++     * @param array $yearResponse
++     * @return bool
++     */
++    protected function isExpYear($yearResponse)
++    {
++        if (empty($yearResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/Last4Mapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/Last4Mapper.php
+new file mode 100644
+index 0000000..f531029
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/Last4Mapper.php
+@@ -0,0 +1,40 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\Last4Mapper as Base_Last4Mapper;
++
++class Last4Mapper extends Base_Last4Mapper
++{
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $ccLast4 = $order->getPayment()->getCcLast4();
++        $ccLast = null;
++
++        if ($this->isCCLast($ccLast4)) {
++            $ccLast = $ccLast4;
++        }
++
++        if (empty($ccLast)) {
++            $ccLast = parent::getPaymentData($order);
++        }
++
++        return $ccLast;
++    }
++
++     /**
++     * @param array $additionalInfo
++     * @return bool
++     */
++    protected function isCCLast($ccLast4)
++    {
++        if (empty($ccLast4)) {
++            return false;
++        }
++        return true;
++    }
++}
+diff --git a/vendor/apexxpayment/base/Model/Payment/MappingPayment/TransactionIdMapper.php b/vendor/apexxpayment/base/Model/Payment/MappingPayment/TransactionIdMapper.php
+new file mode 100644
+index 0000000..ff01462
+--- /dev/null
++++ b/vendor/apexxpayment/base/Model/Payment/MappingPayment/TransactionIdMapper.php
+@@ -0,0 +1,41 @@
++<?php
++
++namespace Apexx\Base\Model\Payment\MappingPayment;
++use Magento\Sales\Model\Order;
++use Signifyd\Connect\Model\Payment\Base\TransactionIdMapper as Base_TransactionIdMapper;
++
++class TransactionIdMapper extends Base_TransactionIdMapper
++{
++
++    /**
++     * @param Order $order
++     * @return string
++     */
++    public function getPaymentData(Order $order)
++    {
++        $LastTransIdResponse = $order->getPayment()->getLastTransId();
++        $LastTransId = null;
++
++        if ($this->isLastTransId($LastTransIdResponse)) {
++            $LastTransId = $LastTransIdResponse;
++        }
++
++        if (empty($LastTransId)) {
++            $LastTransId = parent::getPaymentData($order);
++        }
++
++        return $LastTransId;
++    }
++
++     /**
++     * @param array $additionalInfo
++     * @return bool
++     */
++    protected function isLastTransId($LastTransIdResponse)
++    {
++        if (empty($LastTransIdResponse)) {
++            return false;
++        }
++        return true;
++    }
++}
+diff --git a/vendor/apexxpayment/base/etc/config.xml b/vendor/apexxpayment/base/etc/config.xml
+new file mode 100644
+index 0000000..892c310
+--- /dev/null
++++ b/vendor/apexxpayment/base/etc/config.xml
+@@ -0,0 +1,36 @@
++<?xml version="1.0"?>
++<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
++    <default>
++        <signifyd>
++            <payment>
++                <hostedpayment_gateway>
++                    <signifyd_bin_adapter>Apexx\Base\Model\Payment\MappingPayment\BinMapper</signifyd_bin_adapter>
++                    <signifyd_avs_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\AvsEmsCodeMapper</signifyd_avs_ems_adapter>
++                    <signifyd_cvv_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\CvvEmsCodeMapper</signifyd_cvv_ems_adapter>
++                    <signifyd_exp_month_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpMonthMapper</signifyd_exp_month_adapter>
++                    <signifyd_exp_year_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpYearMapper</signifyd_exp_year_adapter>
++                    <signifyd_last4_adapter>Apexx\Base\Model\Payment\MappingPayment\Last4Mapper</signifyd_last4_adapter>
++                    <signifyd_transaction_id_adapter>Apexx\Base\Model\Payment\MappingPayment\TransactionIdMapper</signifyd_transaction_id_adapter>
++                </hostedpayment_gateway>
++                <ccdirect_gateway>
++                    <signifyd_bin_adapter>Apexx\Base\Model\Payment\MappingPayment\BinMapper</signifyd_bin_adapter>
++                    <signifyd_avs_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\AvsEmsCodeMapper</signifyd_avs_ems_adapter>
++                    <signifyd_cvv_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\CvvEmsCodeMapper</signifyd_cvv_ems_adapter>
++                    <signifyd_exp_month_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpMonthMapper</signifyd_exp_month_adapter>
++                    <signifyd_exp_year_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpYearMapper</signifyd_exp_year_adapter>
++                    <signifyd_last4_adapter>Apexx\Base\Model\Payment\MappingPayment\Last4Mapper</signifyd_last4_adapter>
++                    <signifyd_transaction_id_adapter>Apexx\Base\Model\Payment\MappingPayment\TransactionIdMapper</signifyd_transaction_id_adapter>
++                </ccdirect_gateway>
++                <cse_gateway>
++                    <signifyd_bin_adapter>Apexx\Base\Model\Payment\MappingPayment\BinMapper</signifyd_bin_adapter>
++                    <signifyd_avs_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\AvsEmsCodeMapper</signifyd_avs_ems_adapter>
++                    <signifyd_cvv_ems_adapter>Apexx\Base\Model\Payment\MappingPayment\CvvEmsCodeMapper</signifyd_cvv_ems_adapter>
++                    <signifyd_exp_month_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpMonthMapper</signifyd_exp_month_adapter>
++                    <signifyd_exp_year_adapter>Apexx\Base\Model\Payment\MappingPayment\ExpYearMapper</signifyd_exp_year_adapter>
++                    <signifyd_last4_adapter>Apexx\Base\Model\Payment\MappingPayment\Last4Mapper</signifyd_last4_adapter>
++                    <signifyd_transaction_id_adapter>Apexx\Base\Model\Payment\MappingPayment\TransactionIdMapper</signifyd_transaction_id_adapter>
++                </cse_gateway>
++            </payment>
++        </signifyd>
++    </default>
++</config>
